@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { useContext, useEffect, useState } from 'react';
+import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { CartContext } from '../context/cartContextObject';
 
 const API_URL = 'https://api.thecatapi.com/v1/breeds?limit=30';
 function getImageUrl(cat) {
@@ -11,6 +13,7 @@ export default function Cats() {
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -72,6 +75,19 @@ export default function Cats() {
                   <Card.Text>
                     <strong>Ursprung:</strong> {cat.origin}
                   </Card.Text>
+                  <div className="d-flex gap-2 mt-3">
+                    <Button
+                      as={Link}
+                      to={`/cats/${cat.id}`}
+                      state={{ cat }}
+                      variant="outline-primary"
+                    >
+                      Visa detaljer
+                    </Button>
+                    <Button variant="success" onClick={() => addToCart(cat)}>
+                      Lägg i kundvagn
+                    </Button>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>

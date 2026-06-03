@@ -1,16 +1,53 @@
-# React + Vite
+# Kattbutik - Del B
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Detta ar min inlamningsuppgift i React.
 
-Currently, two official plugins are available:
+Jag har byggt en kattbutik som hamtar katter fran API och visar dem i appen.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Byggt med
 
-## React Compiler
+- React
+- React Router
+- React Bootstrap
+- Context API
+- Vite
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Funktioner
 
-## Expanding the ESLint configuration
+- Meny for att ga mellan sidor
+- Startsida
+- Sida om agaren
+- Kattsida som hamtar data fran The Cat API
+- Detaljsida for varje katt
+- Kundvagn med Context API
+- Antal i kundvagn visas direkt i menyn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## API
+
+https://api.thecatapi.com/v1/breeds?limit=30
+
+## Sa kor du projektet
+
+1. Installera paket:
+
+```bash
+npm install
+```
+
+2. Starta projektet:
+
+```bash
+npm run dev
+```
+
+3. Oppna länken som visas i terminalen (oftast http://localhost:5173)
+
+## Bygga for produktion
+
+```bash
+npm run build
+```
+
+## Forfattare
+
+Adam Walid
