@@ -4,10 +4,20 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { CartContext } from '../context/cartContextObject';
 
 const API_URL = 'https://api.thecatapi.com/v1/breeds?limit=100';
+const FALLBACK_IMAGES = [
+  'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg',
+  'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg',
+  'https://cdn2.thecatapi.com/images/bpc.jpg',
+  'https://cdn2.thecatapi.com/images/6R8Y8fEwz.jpg',
+  'https://cdn2.thecatapi.com/images/ai6Jps4sx.jpg',
+];
 
 function getImageUrl(cat) {
   if (cat?.image?.url) return cat.image.url;
-  return 'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg';
+
+  const idText = String(cat?.id ?? '0');
+  const hash = idText.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return FALLBACK_IMAGES[hash % FALLBACK_IMAGES.length];
 }
 
 export default function CatDetails() {

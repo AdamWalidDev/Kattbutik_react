@@ -18,9 +18,13 @@ Jag har byggt en kattbutik som hamtar katter fran API och visar dem i appen.
 - Startsida
 - Sida om agaren
 - Kattsida som hamtar data fran The Cat API
+- Sok pa kattnamn
+- Pagination (10 katter per sida)
 - Detaljsida for varje katt
 - Kundvagn med Context API
 - Antal i kundvagn visas direkt i menyn
+- Modal i kundvagn med formular (namn, e-post, leveransadress)
+- Skicka order med orderbekraftelse
 
 ## API
 
@@ -47,6 +51,10 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## Status just nu
+
+Projektet ar klart enligt kraven for Del B (G och VG).
 
 ## Forfattare
 

@@ -1,18 +1,76 @@
-import { useContext } from 'react';
-import { Alert, Button, Card, Container, ListGroup } from 'react-bootstrap';
+import { useContext, useState } from 'react';
+import {
+  Alert,
+  Button,
+  Card,
+  Container,
+  Form,
+  ListGroup,
+  Modal,
+} from 'react-bootstrap';
 import { CartContext } from '../context/cartContextObject';
+
+const FALLBACK_IMAGES = [
+  'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg',
+  'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg',
+  'https://cdn2.thecatapi.com/images/bpc.jpg',
+  'https://cdn2.thecatapi.com/images/6R8Y8fEwz.jpg',
+  'https://cdn2.thecatapi.com/images/ai6Jps4sx.jpg',
+];
 
 function getImageUrl(cat) {
   if (cat?.image?.url) return cat.image.url;
-  return 'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg';
+
+  const idText = String(cat?.id ?? '0');
+  const hash = idText.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return FALLBACK_IMAGES[hash % FALLBACK_IMAGES.length];
 }
 
 export default function Cart() {
   const { cart, clearCart } = useContext(CartContext);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [showOrderAlert, setShowOrderAlert] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    address: '',
+  });
+
+  function openCheckout() {
+    setShowCheckout(true);
+  }
+
+  function closeCheckout() {
+    setShowCheckout(false);
+  }
+
+  function handleFieldChange(event) {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function submitOrder(event) {
+    event.preventDefault();
+    setShowCheckout(false);
+    setShowOrderAlert(true);
+    clearCart();
+    setFormData({ name: '', email: '', address: '' });
+  }
 
   return (
     <Container className="py-5">
       <h2>Kundvagn</h2>
+
+      {showOrderAlert && (
+        <Alert
+          variant="success"
+          className="mt-3"
+          dismissible
+          onClose={() => setShowOrderAlert(false)}
+        >
+          Tack! Din order ar skickad.
+        </Alert>
+      )}
 
       {cart.length === 0 && (
         <Alert variant="info" className="mt-3">
@@ -47,8 +105,63 @@ export default function Cart() {
           <Button variant="danger" className="mt-3" onClick={clearCart}>
             Töm kundvagn
           </Button>
+
+          <Button variant="primary" className="mt-3 ms-2" onClick={openCheckout}>
+            Till kassan
+          </Button>
         </>
       )}
+
+      <Modal show={showCheckout} onHide={closeCheckout} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Slutfor bestallning</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={submitOrder}>
+          <Modal.Body>
+            <Form.Group className="mb-3" controlId="checkout-name">
+              <Form.Label>Namn</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleFieldChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="checkout-email">
+              <Form.Label>E-post</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleFieldChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="checkout-address">
+              <Form.Label>Leveransadress</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="address"
+                value={formData.address}
+                onChange={handleFieldChange}
+                required
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={closeCheckout}>
+              Avbryt
+            </Button>
+            <Button variant="success" type="submit">
+              Skicka order
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </Container>
   );
 }

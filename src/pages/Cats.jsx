@@ -1,19 +1,59 @@
 import { useContext, useEffect, useState } from 'react';
-import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Pagination,
+  Row,
+  Spinner,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/cartContextObject';
 
 const API_URL = 'https://api.thecatapi.com/v1/breeds?limit=30';
+const CATS_PER_PAGE = 10;
+const FALLBACK_IMAGES = [
+  'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg',
+  'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg',
+  'https://cdn2.thecatapi.com/images/bpc.jpg',
+  'https://cdn2.thecatapi.com/images/6R8Y8fEwz.jpg',
+  'https://cdn2.thecatapi.com/images/ai6Jps4sx.jpg',
+];
+
 function getImageUrl(cat) {
   if (cat.image?.url) return cat.image.url;
-  return 'https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg';
+
+  const idText = String(cat?.id ?? '0');
+  const hash = idText.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return FALLBACK_IMAGES[hash % FALLBACK_IMAGES.length];
 }
 
 export default function Cats() {
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const { addToCart } = useContext(CartContext);
+
+  const filteredCats = cats.filter((cat) =>
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredCats.length / CATS_PER_PAGE);
+  const pageStart = (currentPage - 1) * CATS_PER_PAGE;
+  const pageCats = filteredCats.slice(pageStart, pageStart + CATS_PER_PAGE);
+
+  function handleSearchChange(event) {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
+  }
+
+  function goToPage(page) {
+    setCurrentPage(page);
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -46,6 +86,16 @@ export default function Cats() {
     <Container className="py-5">
       <h2>Katter</h2>
 
+      <Form.Group className="mt-3" controlId="cat-search">
+        <Form.Label>Sok katt pa namn</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Skriv t.ex. Ben"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+      </Form.Group>
+
       {loading && (
         <div className="text-center py-5">
           <Spinner animation="border" role="status" />
@@ -55,13 +105,14 @@ export default function Cats() {
 
       {!loading && error && <Alert variant="danger">{error}</Alert>}
 
-      {!loading && !error && cats.length === 0 && (
+      {!loading && !error && filteredCats.length === 0 && (
         <Alert variant="warning">Inga katter hittades.</Alert>
       )}
 
-      {!loading && !error && cats.length > 0 && (
-        <Row className="g-4 mt-1">
-          {cats.map((cat) => (
+      {!loading && !error && filteredCats.length > 0 && (
+        <>
+          <Row className="g-4 mt-1">
+            {pageCats.map((cat) => (
             <Col key={cat.id} sm={12} md={6} lg={4}>
               <Card className="h-100 shadow-sm">
                 <Card.Img
@@ -91,8 +142,33 @@ export default function Cats() {
                 </Card.Body>
               </Card>
             </Col>
-          ))}
-        </Row>
+            ))}
+          </Row>
+
+          {totalPages > 1 && (
+            <Pagination className="mt-4 justify-content-center flex-wrap">
+              <Pagination.Prev
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              />
+
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                <Pagination.Item
+                  key={page}
+                  active={page === currentPage}
+                  onClick={() => goToPage(page)}
+                >
+                  {page}
+                </Pagination.Item>
+              ))}
+
+              <Pagination.Next
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              />
+            </Pagination>
+          )}
+        </>
       )}
     </Container>
   );
