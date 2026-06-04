@@ -52,10 +52,6 @@ npm run dev
 npm run build
 ```
 
-## Status just nu
-
-Projektet ar klart enligt kraven for Del B (G och VG).
-
 ## Forfattare
 
 Adam Walid
