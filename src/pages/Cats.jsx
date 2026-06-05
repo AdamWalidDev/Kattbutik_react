@@ -31,6 +31,22 @@ function getImageUrl(cat) {
   return FALLBACK_IMAGES[hash % FALLBACK_IMAGES.length];
 }
 
+async function getImageUrlFromReferenceId(referenceImageId, signal) {
+  if (!referenceImageId) return null;
+
+  try {
+    const response = await fetch(`https://api.thecatapi.com/v1/images/${referenceImageId}`, {
+      signal,
+    });
+
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?.url ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Cats() {
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +84,33 @@ export default function Cats() {
         }
 
         const data = await response.json();
-        setCats(data);
+
+        const catsWithImages = await Promise.all(
+          data.map(async (cat) => {
+            if (cat.image?.url || !cat.reference_image_id) {
+              return cat;
+            }
+
+            const resolvedImageUrl = await getImageUrlFromReferenceId(
+              cat.reference_image_id,
+              controller.signal
+            );
+
+            if (!resolvedImageUrl) {
+              return cat;
+            }
+
+            return {
+              ...cat,
+              image: {
+                ...(cat.image ?? {}),
+                url: resolvedImageUrl,
+              },
+            };
+          })
+        );
+
+        setCats(catsWithImages);
       } catch (err) {
         if (err.name !== 'AbortError') {
           setError('Något gick fel vid hämtning av katter. Försök igen.');
