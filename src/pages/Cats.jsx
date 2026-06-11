@@ -168,7 +168,7 @@ export default function Cats() {
                   <Card.Text>
                     <strong>Ursprung:</strong> {cat.origin}
                   </Card.Text>
-                  <div className="d-flex gap-2 mt-3">
+                  <div className="d-grid gap-2 mt-3">
                     <Button
                       as={Link}
                       to={`/cats/${cat.id}`}

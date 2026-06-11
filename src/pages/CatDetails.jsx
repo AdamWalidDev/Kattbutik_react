@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Alert, Button, Card, Container, Spinner } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { CartContext } from '../context/cartContextObject';
 
@@ -78,35 +78,43 @@ export default function CatDetails() {
       {!loading && error && <Alert variant="danger">{error}</Alert>}
 
       {!loading && !error && cat && (
-        <Card className="shadow-sm">
-          <Card.Img
-            variant="top"
-            src={getImageUrl(cat)}
-            alt={cat.name}
-            style={{ maxHeight: '420px', objectFit: 'cover' }}
-          />
-          <Card.Body>
-            <Card.Title className="mb-3">{cat.name}</Card.Title>
-            <Card.Text>
-              <strong>Ursprung:</strong> {cat.origin}
-            </Card.Text>
-            <Card.Text>
-              <strong>Temperament:</strong> {cat.temperament}
-            </Card.Text>
-            <Card.Text>
-              <strong>Beskrivning:</strong> {cat.description}
-            </Card.Text>
+        <Row className="gy-4">
+          <Col lg={6}>
+            <Card className="shadow-sm h-100">
+              <Card.Img
+                variant="top"
+                src={getImageUrl(cat)}
+                alt={cat.name}
+                style={{ height: '300px', objectFit: 'cover' }}
+              />
+            </Card>
+          </Col>
+          <Col lg={6}>
+            <Card className="shadow-sm h-100">
+              <Card.Body className="d-flex flex-column">
+                <Card.Title className="mb-3">{cat.name}</Card.Title>
+                <Card.Text>
+                  <strong>Ursprung:</strong> {cat.origin}
+                </Card.Text>
+                <Card.Text>
+                  <strong>Temperament:</strong> {cat.temperament}
+                </Card.Text>
+                <Card.Text>
+                  <strong>Beskrivning:</strong> {cat.description}
+                </Card.Text>
 
-            <div className="d-flex gap-2 mt-3">
-              <Button variant="success" onClick={() => addToCart(cat)}>
-                Lägg i kundvagn
-              </Button>
-              <Button as={Link} to="/cats" variant="outline-secondary">
-                Tillbaka till katter
-              </Button>
-            </div>
-          </Card.Body>
-        </Card>
+                <div className="d-grid gap-2 mt-auto">
+                  <Button variant="success" onClick={() => addToCart(cat)}>
+                    Lägg i kundvagn
+                  </Button>
+                  <Button as={Link} to="/cats" variant="outline-secondary">
+                    Tillbaka till katter
+                  </Button>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       )}
     </Container>
   );

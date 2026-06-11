@@ -3,10 +3,12 @@ import {
   Alert,
   Button,
   Card,
+  Col,
   Container,
   Form,
   ListGroup,
   Modal,
+  Row,
 } from 'react-bootstrap';
 import { CartContext } from '../context/cartContextObject';
 
@@ -80,35 +82,35 @@ export default function Cart() {
 
       {cart.length > 0 && (
         <>
-          <ListGroup className="mt-3">
+          <Row className="g-3 mt-3">
             {cart.map((cat, index) => (
-              <ListGroup.Item key={`${cat.id}-${index}`}>
-                <div className="d-flex align-items-center gap-3">
-                  <img
+              <Col key={`${cat.id}-${index}`} xs={12} md={6} lg={4}>
+                <Card className="h-100 shadow-sm">
+                  <Card.Img
+                    variant="top"
                     src={getImageUrl(cat)}
                     alt={cat.name}
-                    width="90"
-                    height="90"
-                    style={{ objectFit: 'cover', borderRadius: '8px' }}
+                    style={{ height: '180px', objectFit: 'cover' }}
                   />
-                  <Card.Body className="p-0">
-                    <Card.Title className="mb-1">{cat.name}</Card.Title>
-                    <Card.Text className="mb-0">
+                  <Card.Body>
+                    <Card.Title>{cat.name}</Card.Title>
+                    <Card.Text>
                       <strong>Ursprung:</strong> {cat.origin}
                     </Card.Text>
                   </Card.Body>
-                </div>
-              </ListGroup.Item>
+                </Card>
+              </Col>
             ))}
-          </ListGroup>
+          </Row>
 
-          <Button variant="danger" className="mt-3" onClick={clearCart}>
-            Töm kundvagn
-          </Button>
-
-          <Button variant="primary" className="mt-3 ms-2" onClick={openCheckout}>
-            Till kassan
-          </Button>
+          <div className="d-grid gap-2 mt-4 d-md-flex justify-content-md-start">
+            <Button variant="danger" onClick={clearCart}>
+              Töm kundvagn
+            </Button>
+            <Button variant="primary" onClick={openCheckout}>
+              Till kassan
+            </Button>
+          </div>
         </>
       )}
 
