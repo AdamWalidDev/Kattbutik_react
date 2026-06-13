@@ -7,7 +7,7 @@ export default function AppNavbar() {
   const { cartCount } = useContext(CartContext);
   return (
     <Navbar bg="dark" variant="dark" expand="md">
-      <Container>
+      <Container fluid className="px-3">
         <Navbar.Brand as={Link} to="/">Kattbutik</Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
